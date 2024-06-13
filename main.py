@@ -90,41 +90,38 @@ if __name__ == '__main__':
         try:
             query = takeCommand().lower()
 
-            if "open youtube" in query:
-                say("Opening YouTube")
+            if "buka youtube" in query:
+                say("Membuka YouTube")
                 webbrowser.open("https://www.youtube.com")
 
-            elif "open wikipedia" in query:
-                say("Opening Wikipedia")
+            elif "buka wikipedia" in query:
+                say("Membuka Wikipedia")
                 webbrowser.open("https://www.wikipedia.com")
 
-            elif "open google" in query:
-                say("Opening Google")
+            elif "buka google" in query:
+                say("Membuka Google")
                 webbrowser.open("https://www.google.com")
 
-            elif "open spotify" in query:
-                say("Opening Spotify")
+            elif "buka spotify" in query:
+                say("Membuka Spotify")
                 os.startfile(r"C:\Users\user\Desktop\Spotify.lnk")
 
-            elif "the time" in query:
+            elif "jam berapa" in query:
                 hour = datetime.datetime.now().strftime("%H")
                 min = datetime.datetime.now().strftime("%M")
                 say(f"Sekarang jam {hour} dan {min} menit")
 
-            elif "open facetime" in query:
+            elif "buka facetime" in query:
                 os.system("start Facetime")
 
-            elif "open pass" in query:
+            elif "buka pass" in query:
                 os.system("start Passky")
 
-            elif "using artificial intelligence" in query:
-                chat(query)
-
-            elif "bot quit" in query:
+            elif "akhiri chat" in query:
                 say("Terima kasih, sampai jumpa lagi!")
                 break
 
-            elif "reset chat" in query:
+            elif "bersihkan chat" in query:
                 chatStr = ""
 
             else:
