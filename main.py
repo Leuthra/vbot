@@ -4,10 +4,10 @@ import webbrowser
 import requests
 import json
 import datetime
-import pyttsx3
+from gtts import gTTS
+import pygame
+import io
 
-# Initialize the TTS engine
-engine = pyttsx3.init()
 chatStr = ""
 
 def chat(query):
@@ -22,7 +22,7 @@ def chat(query):
         "messages": [
             {
                 "role": "assistant",
-                "content": "Hello! How are you today?"
+                "content": "nama kamu sekarang adalah vbot"
             }
         ],
         "prompt": query,
@@ -34,44 +34,58 @@ def chat(query):
         response = requests.post(url, headers=headers, data=json.dumps(data))
         if response.status_code == 200:
             response_json = response.json()
-            response_text = response_json.get("gpt", "Error in response")
+            response_text = response_json.get("gpt", "Tidak Menemukan Jawaban dari REST API")
             say(response_text)
             chatStr += f"{response_text}\n"
             return response_text
         else:
             print(f"Error: {response.status_code}")
-            return "I'm sorry, I encountered an error."
+            return "Tidak dapat menangani error dari REST API"
     except Exception as e:
         print(e)
-        return "I'm sorry, I encountered an error."
+        return "Tidak dapat menangani error dari REST API"
 
 def say(text):
-    engine.say(text)
-    engine.runAndWait()
+    # Generate speech with gTTS
+    tts = gTTS(text=text, lang='id')
+    
+    # Save the speech to a BytesIO object
+    mp3_fp = io.BytesIO()
+    tts.write_to_fp(mp3_fp)
+    mp3_fp.seek(0)
+    
+    # Initialize pygame mixer
+    pygame.mixer.init()
+    pygame.mixer.music.load(mp3_fp, 'mp3')
+    pygame.mixer.music.play()
+    
+    # Wait for the speech to finish playing
+    while pygame.mixer.music.get_busy():
+        continue
 
 def takeCommand():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening...")
+        print("Silakan Berbicara...")
         audio = r.listen(source)
         try:
-            print("Recognizing...")
+            print("Mendengarkan...")
             query = r.recognize_google(audio, language="id-ID")
-            print(f"User said: {query}")
+            print(f"User: {query}")
             return query
         except sr.UnknownValueError:
-            print("Sorry, I did not understand that.")
-            return "Sorry, I did not understand that."
+            print("Tidak dapat mengenali suara")
+            return "Tidak dapat mengenali suara"
         except sr.RequestError as e:
-            print(f"Could not request results; {e}")
-            return "Sorry, I am having trouble connecting."
+            print(f"Tidak dapat menerima Request; {e}")
+            return "Maaf, koneksi error"
         except Exception as e:
             print(e)
-            return "Some Error Occurred. Sorry from Bot"
+            return "Kerusakan pada VBOT, tidak dapat menerima input"
 
 if __name__ == '__main__':
     print('Starting Bot...')
-    say("Hello Sir! I am Bot. How can I help you?")
+    say("Halo, saya VBOT. Ada yang bisa saya bantu?")
     while True:
         try:
             query = takeCommand().lower()
@@ -89,13 +103,13 @@ if __name__ == '__main__':
                 webbrowser.open("https://www.google.com")
 
             elif "open spotify" in query:
-                say("Opening Google")
+                say("Opening Spotify")
                 os.startfile(r"C:\Users\user\Desktop\Spotify.lnk")
 
             elif "the time" in query:
                 hour = datetime.datetime.now().strftime("%H")
                 min = datetime.datetime.now().strftime("%M")
-                say(f"Sir, the time is {hour} hours and {min} minutes")
+                say(f"Sekarang jam {hour} dan {min} menit")
 
             elif "open facetime" in query:
                 os.system("start Facetime")
@@ -107,7 +121,7 @@ if __name__ == '__main__':
                 chat(query)
 
             elif "bot quit" in query:
-                say("Goodbye Sir!")
+                say("Terima kasih, sampai jumpa lagi!")
                 break
 
             elif "reset chat" in query:
