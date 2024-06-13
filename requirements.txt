@@ -1,5 +1,6 @@
-speech_recognition
+SpeechRecognition
+setuptools
 requests
-json
-pyttsx3
-datetime
+gtts
+pygame
+PyAudio
