@@ -1,8 +1,10 @@
 import speech_recognition as sr
 import requests
 import json
-import pyttsx3
 import time
+from gtts import gTTS
+import pygame
+import io
 
 def transcribe_audio(timeout=5):
     recognizer = sr.Recognizer()
@@ -34,7 +36,7 @@ def ask_gpt(prompt):
         "messages": [
             {
                 "role": "assistant",
-                "content": "Hello! How are you today?"
+                "content": "nama kamu sekarang adalah vbot"
             }
         ],
         "prompt": prompt,
@@ -46,7 +48,7 @@ def ask_gpt(prompt):
         response = requests.post(url, headers=headers, data=json.dumps(data))
         if response.status_code == 200:
             response_json = response.json()
-            response_text = response_json.get("gpt", "Error: no response text found")
+            response_text = response_json.get("gpt", "Tidak Menemukan Jawaban dari REST API")
             print("AI: " + response_text)
             return response_text
         else:
@@ -57,9 +59,22 @@ def ask_gpt(prompt):
         return None
 
 def text_to_speech(text):
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
+    # Generate speech with gTTS
+    tts = gTTS(text=text, lang='en')
+    
+    # Save the speech to a BytesIO object
+    mp3_fp = io.BytesIO()
+    tts.write_to_fp(mp3_fp)
+    mp3_fp.seek(0)
+    
+    # Initialize pygame mixer
+    pygame.mixer.init()
+    pygame.mixer.music.load(mp3_fp, 'mp3')
+    pygame.mixer.music.play()
+    
+    # Wait for the speech to finish playing
+    while pygame.mixer.music.get_busy():
+        continue
 
 if __name__ == "__main__":
     try:
