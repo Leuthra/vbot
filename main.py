@@ -7,6 +7,7 @@ import datetime
 from gtts import gTTS
 import pygame
 import io
+import pywhatkit
 
 chatStr = ""
 
@@ -102,9 +103,9 @@ if __name__ == '__main__':
                 say("Membuka Google")
                 webbrowser.open("https://www.google.com")
 
-            elif "buka spotify" in query:
-                say("Membuka Spotify")
-                os.startfile(r"C:\Users\user\Desktop\Spotify.lnk")
+            elif "play musik":
+                say(f"memainkan musik {query}")
+                pywhatkit.playonyt(query)
 
             elif "jam berapa" in query:
                 hour = datetime.datetime.now().strftime("%H")
